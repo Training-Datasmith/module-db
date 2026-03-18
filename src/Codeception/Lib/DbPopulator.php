@@ -104,11 +104,11 @@ class DbPopulator
             throw new \RuntimeException(
                 "The populator command did not end successfully: \n" .
                 "  Exit code: {$exitCode} \n" .
-                "  Output:" . implode("\n", $output)
+                '  Output:' . implode("\n", $output)
             );
         }
 
-        codecept_debug("[Db] Populator Finished.");
+        codecept_debug('[Db] Populator Finished.');
     }
 
     public function buildCommands(): array

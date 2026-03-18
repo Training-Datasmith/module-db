@@ -77,7 +77,7 @@ class Oci extends Db
 
             if (substr($query, -1 * $delimiterLength, $delimiterLength) == $delimiter) {
                 $this->sqlQuery(substr($query, 0, -1 * $delimiterLength));
-                $query = "";
+                $query = '';
             }
         }
 

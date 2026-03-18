@@ -29,7 +29,7 @@ final class MySqlDbTest extends AbstractDbTest
             'dump' => 'tests/data/dumps/mysql.sql',
             'reconnect' => true,
             'cleanup' => true,
-            'populate' => true
+            'populate' => true,
         ];
     }
 
@@ -41,7 +41,6 @@ final class MySqlDbTest extends AbstractDbTest
         $testCase1 = Stub::makeEmpty(TestInterface::class);
         $testCase2 = Stub::makeEmpty(TestInterface::class);
         $testCase3 = Stub::makeEmpty(TestInterface::class);
-
 
         $this->module->_setConfig(['reconnect' => false]);
         $this->module->_beforeSuite();
@@ -105,7 +104,7 @@ final class MySqlDbTest extends AbstractDbTest
     {
         try {
             $this->module->grabEntryFromDatabase('users', ['email' => 'doesnot@exist.info']);
-            $this->fail("should have thrown an exception");
+            $this->fail('should have thrown an exception');
         } catch (\Throwable $t) {
             $this->assertInstanceOf(AssertionError::class, $t);
         }

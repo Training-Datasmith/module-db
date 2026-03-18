@@ -47,7 +47,7 @@ abstract class AbstractDbTest extends Unit
         // Save these object instances IDs
         $driverAndConn1 = [
             $this->module->_getDriver(),
-            $this->module->_getDbh()
+            $this->module->_getDbh(),
         ];
         $this->module->_after($testCase1);
 
@@ -56,7 +56,7 @@ abstract class AbstractDbTest extends Unit
 
         $driverAndConn2 = [
             $this->module->_getDriver(),
-            $this->module->_getDbh()
+            $this->module->_getDbh(),
         ];
         $this->module->_after($testCase2);
         $this->assertSame($driverAndConn2, $driverAndConn1);

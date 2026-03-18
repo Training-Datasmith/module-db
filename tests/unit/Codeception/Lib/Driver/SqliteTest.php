@@ -15,7 +15,7 @@ final class SqliteTest extends Unit
     protected static array $config = [
         'dsn' => 'sqlite:tests/data/sqlite.db',
         'user' => 'root',
-        'password' => ''
+        'password' => '',
     ];
 
     protected static ?Sqlite $sqlite = null;
@@ -26,7 +26,7 @@ final class SqliteTest extends Unit
     {
         $dumpFile = '/dumps/sqlite.sql';
         $sql = file_get_contents(\Codeception\Configuration::dataDir() . $dumpFile);
-        $sql = preg_replace('#/\*(?:(?!\*/).)*\*/#s', "", $sql);
+        $sql = preg_replace('#/\*(?:(?!\*/).)*\*/#s', '', $sql);
         self::$sql = explode("\n", $sql);
     }
 

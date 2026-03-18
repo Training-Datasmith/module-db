@@ -12,7 +12,7 @@ final class MysqlTest extends Unit
     protected static array $config = [
         'dsn' => 'mysql:host=localhost;dbname=codeception_test',
         'user' => 'root',
-        'password' => ''
+        'password' => '',
     ];
 
     protected static $sql;
@@ -32,7 +32,7 @@ final class MysqlTest extends Unit
         self::$config['password'] = $password;
 
         $sql = file_get_contents(\Codeception\Configuration::dataDir() . '/dumps/mysql.sql');
-        $sql = preg_replace('#/\*(?:(?!\*/).)*\*/#s', "", $sql);
+        $sql = preg_replace('#/\*(?:(?!\*/).)*\*/#s', '', $sql);
         self::$sql = explode("\n", $sql);
         try {
             $mysql = Db::create(self::$config['dsn'], self::$config['user'], self::$config['password']);
@@ -60,9 +60,9 @@ final class MysqlTest extends Unit
 
     public function testCleanupDatabase()
     {
-        $this->assertNotEmpty($this->mysql->getDbh()->query("SHOW TABLES")->fetchAll());
+        $this->assertNotEmpty($this->mysql->getDbh()->query('SHOW TABLES')->fetchAll());
         $this->mysql->cleanup();
-        $this->assertEmpty($this->mysql->getDbh()->query("SHOW TABLES")->fetchAll());
+        $this->assertEmpty($this->mysql->getDbh()->query('SHOW TABLES')->fetchAll());
     }
 
     public function testLoadDump()
@@ -93,14 +93,14 @@ final class MysqlTest extends Unit
 
     public function testSelectWithBooleanParam()
     {
-        $res = $this->mysql->executeQuery("select `id` from `users` where `is_active` = ?", [false]);
+        $res = $this->mysql->executeQuery('select `id` from `users` where `is_active` = ?', [false]);
         $this->assertSame(1, $res->rowCount());
     }
 
     public function testInsertIntoBitField()
     {
         $res = $this->mysql->executeQuery(
-            "insert into `users`(`id`,`name`,`email`,`is_active`,`created_at`) values (?,?,?,?,?)",
+            'insert into `users`(`id`,`name`,`email`,`is_active`,`created_at`) values (?,?,?,?,?)',
             [5, 'insert.test', 'insert.test@mail.ua', false, '2012-02-01 21:17:47']
         );
         $this->assertSame(1, $res->rowCount());

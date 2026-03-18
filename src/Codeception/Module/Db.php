@@ -364,7 +364,7 @@ class Db extends Module implements DbInterface
 
     public function __get($name)
     {
-        Notification::deprecate("Properties dbh and driver are deprecated in favor of Db::_getDbh and Db::_getDriver", "Db module");
+        Notification::deprecate('Properties dbh and driver are deprecated in favor of Db::_getDbh and Db::_getDriver', 'Db module');
 
         if ($name == 'driver') {
             return $this->_getDriver();
@@ -460,7 +460,7 @@ class Db extends Module implements DbInterface
         }
 
         if (!$actions instanceof ActionSequence) {
-            throw new InvalidArgumentException("2nd parameter, actions should be callback, ActionSequence or array");
+            throw new InvalidArgumentException('2nd parameter, actions should be callback, ActionSequence or array');
         }
 
         $actions->run($this);
@@ -524,7 +524,7 @@ class Db extends Module implements DbInterface
             throw new ModuleConfigException(
                 self::class,
                 "\nFile with dump doesn't exist.\n"
-                . "Please, check path for sql file: "
+                . 'Please, check path for sql file: '
                 . $filePath
             );
         }
@@ -537,7 +537,7 @@ class Db extends Module implements DbInterface
         if (!empty($sql) && is_null($replaced)) {
             throw new ModuleException(
                 self::class,
-                "Please, increase pcre.backtrack_limit value in PHP CLI config"
+                'Please, increase pcre.backtrack_limit value in PHP CLI config'
             );
         }
 
@@ -654,7 +654,7 @@ class Db extends Module implements DbInterface
 
     protected function removeInserted($databaseKey = null): void
     {
-        $databaseKey = empty($databaseKey) ?  self::DEFAULT_DATABASE : $databaseKey;
+        $databaseKey = empty($databaseKey) ? self::DEFAULT_DATABASE : $databaseKey;
 
         if (empty($this->insertedRows[$databaseKey])) {
             return;
@@ -673,8 +673,8 @@ class Db extends Module implements DbInterface
 
     public function _cleanup(?string $databaseKey = null, ?array $databaseConfig = null): void
     {
-        $databaseKey = empty($databaseKey) ?  self::DEFAULT_DATABASE : $databaseKey;
-        $databaseConfig = empty($databaseConfig) ?  $this->config : $databaseConfig;
+        $databaseKey = empty($databaseKey) ? self::DEFAULT_DATABASE : $databaseKey;
+        $databaseConfig = empty($databaseConfig) ? $this->config : $databaseConfig;
 
         if (!$databaseConfig['populate']) {
             return;
@@ -726,8 +726,8 @@ class Db extends Module implements DbInterface
 
     public function _loadDump(?string $databaseKey = null, ?array $databaseConfig = null): void
     {
-        $databaseKey = empty($databaseKey) ?  self::DEFAULT_DATABASE : $databaseKey;
-        $databaseConfig = empty($databaseConfig) ?  $this->config : $databaseConfig;
+        $databaseKey = empty($databaseKey) ? self::DEFAULT_DATABASE : $databaseKey;
+        $databaseConfig = empty($databaseConfig) ? $this->config : $databaseConfig;
 
         if (!empty($databaseConfig['populator'])) {
             $this->loadDumpUsingPopulator($databaseKey, $databaseConfig);
@@ -988,7 +988,7 @@ class Db extends Module implements DbInterface
         $result = $sth->fetch(PDO::FETCH_ASSOC, 0);
 
         if ($result === false) {
-            throw new \AssertionError("No matching row found");
+            throw new \AssertionError('No matching row found');
         }
 
         return $result;

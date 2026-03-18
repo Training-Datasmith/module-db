@@ -24,7 +24,7 @@ final class SqliteDbTest extends AbstractDbTest
             'dump' => 'tests/data/dumps/sqlite.sql',
             'reconnect' => true,
             'cleanup' => true,
-            'populate' => true
+            'populate' => true,
         ];
     }
 
@@ -65,7 +65,7 @@ final class SqliteDbTest extends AbstractDbTest
     {
         $config = array_merge($this->getConfig(), [
             'dsn' => 'sqlite:tests/data/sqlite1.db',
-            'cleanup' => false
+            'cleanup' => false,
         ]);
         $this->module->_reconfigure(
             [
@@ -124,7 +124,7 @@ final class SqliteDbTest extends AbstractDbTest
     {
         $config = array_merge($this->getConfig(), [
             'dsn' => 'sqlite:tests/data/sqlite1.db',
-            'cleanup' => false
+            'cleanup' => false,
         ]);
         $this->module->_reconfigure(
             [
@@ -149,7 +149,7 @@ final class SqliteDbTest extends AbstractDbTest
     {
         $config = array_merge($this->getConfig(), [
             'dsn' => 'sqlite:tests/data/sqlite1.db',
-            'cleanup' => false
+            'cleanup' => false,
         ]);
         $this->module->_reconfigure(
             [
@@ -176,7 +176,7 @@ final class SqliteDbTest extends AbstractDbTest
     {
         $config = array_merge($this->getConfig(), [
             'dsn' => 'sqlite:tests/data/sqlite1.db',
-            'cleanup' => false
+            'cleanup' => false,
         ]);
         $this->module->_reconfigure(
             [
@@ -209,7 +209,7 @@ final class SqliteDbTest extends AbstractDbTest
         $testCase2 = Stub::makeEmpty(TestInterface::class);
         $config = array_merge($this->getConfig(), [
             'dsn' => 'sqlite:tests/data/sqlite1.db',
-            'cleanup' => false
+            'cleanup' => false,
         ]);
         $this->module->_reconfigure(
             [

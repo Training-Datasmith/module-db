@@ -16,7 +16,7 @@ final class DbPopulatorTest extends Unit
                 'dump'      => 'tests/data/dumps/sqlite.sql',
                 'user'      => 'root',
                 'populator' => 'mysql -u $user -h $host -D $dbname < $dump',
-                'databases' => []
+                'databases' => [],
             ]
         );
 
@@ -37,7 +37,7 @@ final class DbPopulatorTest extends Unit
                     'tests/data/dumps/sqlite2.sql',
                 ],
                 'user'      => 'root',
-                'populator' => 'mysql -u $user -h $host -D $dbname < $dump'
+                'populator' => 'mysql -u $user -h $host -D $dbname < $dump',
 
             ]
         );
@@ -45,7 +45,7 @@ final class DbPopulatorTest extends Unit
         $this->assertSame(
             [
                 'mysql -u root -h 127.0.0.1 -D my_db < tests/data/dumps/sqlite.sql',
-                'mysql -u root -h 127.0.0.1 -D my_db < tests/data/dumps/sqlite2.sql'
+                'mysql -u root -h 127.0.0.1 -D my_db < tests/data/dumps/sqlite2.sql',
             ],
             $dbPopulator->buildCommands()
         );

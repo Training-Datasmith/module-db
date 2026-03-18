@@ -152,12 +152,12 @@ class Db
     public function insert(string $tableName, array &$data): string
     {
         $columns = array_map(
-            fn(int|string $name): string => $this->getQuotedName($name),
+            fn (int|string $name): string => $this->getQuotedName($name),
             array_keys($data)
         );
 
         return sprintf(
-            "INSERT INTO %s (%s) VALUES (%s)",
+            'INSERT INTO %s (%s) VALUES (%s)',
             $this->getQuotedName($tableName),
             implode(', ', $columns),
             implode(', ', array_fill(0, count($data), '?'))
@@ -168,7 +168,7 @@ class Db
     {
         $where = $this->generateWhereClause($criteria);
 
-        $query = "SELECT %s FROM %s %s";
+        $query = 'SELECT %s FROM %s %s';
         return sprintf($query, $column, $this->getQuotedName($tableName), $where);
     }
 
@@ -199,9 +199,9 @@ class Db
         foreach ($criteria as $k => $v) {
             if ($v === null) {
                 if (strpos($k, ' !=') > 0) {
-                    $params[] = $this->getQuotedName(str_replace(" !=", '', $k)) . " IS NOT NULL ";
+                    $params[] = $this->getQuotedName(str_replace(' !=', '', $k)) . ' IS NOT NULL ';
                 } else {
-                    $params[] = $this->getQuotedName($k) . " IS NULL ";
+                    $params[] = $this->getQuotedName($k) . ' IS NULL ';
                 }
 
                 unset($criteria[$k]);
@@ -223,7 +223,7 @@ class Db
             }
 
             if (!$hasOperand) {
-                $params[] = $this->getQuotedName($k) . " = ? ";
+                $params[] = $this->getQuotedName($k) . ' = ? ';
             }
         }
 
@@ -324,7 +324,7 @@ class Db
 
         $set = [];
         foreach (array_keys($data) as $column) {
-            $set[] = $this->getQuotedName($column) . " = ?";
+            $set[] = $this->getQuotedName($column) . ' = ?';
         }
 
         $where = $this->generateWhereClause($criteria);
