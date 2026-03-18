@@ -9,8 +9,6 @@ namespace Codeception\Lib;
  */
 class DbPopulator
 {
-    protected array $config = [];
-
     protected array $commands = [];
 
     /**
@@ -19,9 +17,8 @@ class DbPopulator
      * @internal param string $command The parameterized command to evaluate and execute later.
      * @internal param Codeception\Module\Db|null $dbModule The Db module used to build the populator command or null.
      */
-    public function __construct(array $config)
+    public function __construct(protected array $config)
     {
-        $this->config = $config;
         //Convert To Array Format
         if (!isset($this->config['dump'])) {
             return;
@@ -118,7 +115,8 @@ class DbPopulator
     {
         if ($this->commands !== []) {
             return $this->commands;
-        } elseif (!isset($this->config['dump']) || $this->config['dump'] === false) {
+        }
+        if (!isset($this->config['dump']) || $this->config['dump'] === false) {
             return [$this->buildCommand($this->config['populator'])];
         }
 

@@ -44,29 +44,19 @@ class Db
      *
      * @see https://www.php.net/manual/en/pdo.construct.php
      * @see https://www.php.net/manual/de/ref.pdo-mysql.php#pdo-mysql.constants
-     *
-     * @return Db|SqlSrv|MySql|Oci|PostgreSql|Sqlite
      */
     public static function create(string $dsn, ?string $user = null, ?string $password = null, ?array $options = null): Db
     {
         $provider = self::getProvider($dsn);
 
-        switch ($provider) {
-            case 'sqlite':
-                return new Sqlite($dsn, $user, $password, $options);
-            case 'mysql':
-                return new MySql($dsn, $user, $password, $options);
-            case 'pgsql':
-                return new PostgreSql($dsn, $user, $password, $options);
-            case 'mssql':
-            case 'dblib':
-            case 'sqlsrv':
-                return new SqlSrv($dsn, $user, $password, $options);
-            case 'oci':
-                return new Oci($dsn, $user, $password, $options);
-            default:
-                return new Db($dsn, $user, $password, $options);
-        }
+        return match ($provider) {
+            'sqlite' => new Sqlite($dsn, $user, $password, $options),
+            'mysql' => new MySql($dsn, $user, $password, $options),
+            'pgsql' => new PostgreSql($dsn, $user, $password, $options),
+            'mssql', 'dblib', 'sqlsrv' => new SqlSrv($dsn, $user, $password, $options),
+            'oci' => new Oci($dsn, $user, $password, $options),
+            default => new Db($dsn, $user, $password, $options),
+        };
     }
 
     public static function getProvider($dsn): string
@@ -103,7 +93,7 @@ class Db
         return $this->dbh;
     }
 
-    public function getDb()
+    public function getDb(): false|string
     {
         $matches = [];
         $matched = preg_match('#dbname=(\w+)#s', $this->dsn, $matches);
@@ -162,7 +152,7 @@ class Db
     public function insert(string $tableName, array &$data): string
     {
         $columns = array_map(
-            fn($name): string => $this->getQuotedName($name),
+            fn(int|string $name): string => $this->getQuotedName($name),
             array_keys($data)
         );
 

@@ -18,7 +18,7 @@ class Sqlite extends Db
     {
         $filename = substr($dsn, 7);
         if ($filename === ':memory:') {
-            throw new ModuleException(__CLASS__, ':memory: database is not supported');
+            throw new ModuleException(self::class, ':memory: database is not supported');
         }
 
         $this->filename = Configuration::projectDir() . $filename;
@@ -81,12 +81,12 @@ class Sqlite extends Db
         return $this->primaryKeys[$tableName];
     }
 
-    private function hasRowId($tableName): bool
+    private function hasRowId(string $tableName): bool
     {
         $params = ['type' => 'table', 'name' => $tableName];
         $select = $this->select('sql', 'sqlite_master', $params);
         $result = $this->executeQuery($select, $params);
         $sql = $result->fetchColumn();
-        return strpos($sql, ') WITHOUT ROWID') === false;
+        return !str_contains($sql, ') WITHOUT ROWID');
     }
 }

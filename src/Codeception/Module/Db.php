@@ -402,7 +402,7 @@ class Db extends Module implements DbInterface
     {
         if (empty($this->getDatabases()[$databaseKey]) && $databaseKey != self::DEFAULT_DATABASE) {
             throw new ModuleConfigException(
-                __CLASS__,
+                self::class,
                 "\nNo database {$databaseKey} in the key databases.\n"
             );
         }
@@ -522,7 +522,7 @@ class Db extends Module implements DbInterface
     {
         if (!file_exists(Configuration::projectDir() . $filePath)) {
             throw new ModuleConfigException(
-                __CLASS__,
+                self::class,
                 "\nFile with dump doesn't exist.\n"
                 . "Please, check path for sql file: "
                 . $filePath
@@ -536,7 +536,7 @@ class Db extends Module implements DbInterface
 
         if (!empty($sql) && is_null($replaced)) {
             throw new ModuleException(
-                __CLASS__,
+                self::class,
                 "Please, increase pcre.backtrack_limit value in PHP CLI config"
             );
         }
@@ -544,7 +544,7 @@ class Db extends Module implements DbInterface
         return $replaced;
     }
 
-    private function connect($databaseKey, $databaseConfig): void
+    private function connect(int|string $databaseKey, array $databaseConfig): void
     {
         if (!empty($this->drivers[$databaseKey]) && !empty($this->dbhs[$databaseKey])) {
             return;
@@ -601,7 +601,7 @@ class Db extends Module implements DbInterface
                 $message = sprintf('could not find %s driver', $missingDriver);
             }
 
-            throw new ModuleException(__CLASS__, $message . ' while creating PDO connection');
+            throw new ModuleException(self::class, $message . ' while creating PDO connection');
         }
 
         if ($databaseConfig['waitlock']) {
@@ -618,7 +618,7 @@ class Db extends Module implements DbInterface
         $this->dbhs[$databaseKey] = $this->drivers[$databaseKey]->getDbh();
     }
 
-    private function disconnect($databaseKey): void
+    private function disconnect(int|string $databaseKey): void
     {
         $this->debugSection('Db', 'Disconnected from ' . $databaseKey);
         $this->dbhs[$databaseKey] = null;
@@ -637,7 +637,7 @@ class Db extends Module implements DbInterface
         parent::_before($test);
     }
 
-    public function _failed(TestInterface $test, $fail)
+    public function _failed(TestInterface $test, $fail): void
     {
         foreach ($this->getDatabases() as $databaseKey => $databaseConfig) {
             if ($databaseConfig['skip_cleanup_if_failed'] ?? false) {
@@ -663,7 +663,7 @@ class Db extends Module implements DbInterface
         foreach (array_reverse($this->insertedRows[$databaseKey]) as $row) {
             try {
                 $this->_getDriver()->deleteQueryByCriteria($row['table'], $row['primary']);
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $this->debug("Couldn't delete record " . json_encode($row['primary'], JSON_THROW_ON_ERROR) . " from {$row['table']}");
             }
         }
@@ -691,7 +691,7 @@ class Db extends Module implements DbInterface
         $dbh = $this->dbhs[$databaseKey];
         if (!$dbh) {
             throw new ModuleConfigException(
-                __CLASS__,
+                self::class,
                 "No connection to database. Remove this module from config if you don't need database repopulation"
             );
         }
@@ -704,7 +704,7 @@ class Db extends Module implements DbInterface
             $this->drivers[$databaseKey]->cleanup();
             $this->databasesPopulated[$databaseKey] = false;
         } catch (Exception $e) {
-            throw new ModuleException(__CLASS__, $e->getMessage());
+            throw new ModuleException(self::class, $e->getMessage());
         }
     }
 
@@ -796,7 +796,7 @@ class Db extends Module implements DbInterface
         return $lastInsertId;
     }
 
-    private function addInsertedRow(string $table, array $row, $id): void
+    private function addInsertedRow(string $table, array $row, int $id): void
     {
         $primaryKey = $this->_getDriver()->getPrimaryKey($table);
         $primary = [];
@@ -884,7 +884,6 @@ class Db extends Module implements DbInterface
      *
      * @param string $table    Table name
      * @param array  $criteria Search criteria [Optional]
-     * @return int
      */
     protected function countInDatabase(string $table, array $criteria = []): int
     {
@@ -1032,7 +1031,6 @@ class Db extends Module implements DbInterface
      *
      * @param string $table    Table name
      * @param array  $criteria Search criteria [Optional]
-     * @return int
      */
     public function grabNumRecords(string $table, array $criteria = []): int
     {

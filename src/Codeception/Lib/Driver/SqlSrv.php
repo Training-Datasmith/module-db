@@ -8,7 +8,7 @@ use PDO;
 
 class SqlSrv extends Db
 {
-    public function getDb()
+    public function getDb(): false|string
     {
         $matches = [];
         $matched = preg_match('#Database=(.*);?#s', $this->dsn, $matches);

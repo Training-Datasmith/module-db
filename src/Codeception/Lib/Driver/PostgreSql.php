@@ -97,7 +97,7 @@ class PostgreSql extends Db
 
     public function sqlQuery(string $query): void
     {
-        if (strpos(trim($query), 'COPY ') === 0) {
+        if (str_starts_with(trim($query), 'COPY ')) {
             if (!extension_loaded('pgsql')) {
                 throw new ModuleException(
                     \Codeception\Module\Db::class,
@@ -135,7 +135,7 @@ class PostgreSql extends Db
 
         try {
             $lastSequence = $this->getDbh()->lastInsertId($sequenceName);
-        } catch (PDOException $exception) {
+        } catch (PDOException) {
             // in this case, the sequence name might be combined with the primary key name
         }
 
