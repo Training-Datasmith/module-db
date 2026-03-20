@@ -1,27 +1,22 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Codeception\Lib\Driver;
 
-use Codeception\Exception\ModuleException;
+use Codeception\Exception\Module_Exception;
 use PDO;
 use PDOException;
-
-class PostgreSql extends Db
+class Postgre_Sql extends Db
 {
     protected bool $putline = false;
-
     /**
      * @var null|resource|bool
      */
     protected $connection;
-
     /**
      * @var mixed|null
      */
-    protected $searchPath;
-
+    protected $search_path;
     /**
      * Loads a SQL file.
      *
@@ -31,58 +26,48 @@ class PostgreSql extends Db
     {
         $query = '';
         $delimiter = ';';
-        $delimiterLength = 1;
-
-        $dollarsOpen = false;
-        foreach ($sql as $singleSql) {
-            if (preg_match('#DELIMITER ([\;\$\|\\\]+)#i', $singleSql, $match)) {
+        $delimiter_length = 1;
+        $dollars_open = false;
+        foreach ($sql as $single_sql) {
+            if (preg_match('#DELIMITER ([\;\$\|\\\\]+)#i', $single_sql, $match)) {
                 $delimiter = $match[1];
-                $delimiterLength = strlen($delimiter);
+                $delimiter_length = strlen($delimiter);
                 continue;
             }
-
-            $parsed = trim($query) == '' && $this->sqlLine($singleSql);
+            $parsed = trim($query) == '' && $this->sql_line($single_sql);
             if ($parsed) {
                 continue;
             }
-
             // Ignore $$ inside SQL standard string syntax such as in INSERT statements.
-            if (!preg_match('#\'.*\$\$.*\'#', $singleSql)) {
-                $pos = strpos($singleSql, '$$');
-                if (($pos !== false) && ($pos >= 0)) {
-                    $dollarsOpen = !$dollarsOpen;
+            if (!preg_match('#\'.*\$\$.*\'#', $single_sql)) {
+                $pos = strpos($single_sql, '$$');
+                if ($pos !== false && $pos >= 0) {
+                    $dollars_open = !$dollars_open;
                 }
             }
-
-            if (preg_match('#SET search_path = .*#i', $singleSql, $match)) {
-                $this->searchPath = $match[0];
+            if (preg_match('#SET search_path = .*#i', $single_sql, $match)) {
+                $this->search_path = $match[0];
             }
-
-            $query .= "\n" . rtrim($singleSql);
-
-            if (!$dollarsOpen && substr($query, -1 * $delimiterLength, $delimiterLength) == $delimiter) {
-                $this->sqlQuery(substr($query, 0, -1 * $delimiterLength));
+            $query .= "\n" . rtrim($single_sql);
+            if (!$dollars_open && substr($query, -1 * $delimiter_length, $delimiter_length) == $delimiter) {
+                $this->sql_query(substr($query, 0, -1 * $delimiter_length));
                 $query = '';
             }
         }
-
         if ($query !== '') {
-            $this->sqlQuery($query);
+            $this->sql_query($query);
         }
     }
-
     public function cleanup(): void
     {
         $this->dbh->exec('DROP SCHEMA IF EXISTS public CASCADE;');
         $this->dbh->exec('CREATE SCHEMA public;');
     }
-
-    public function sqlLine(string $sql): bool
+    public function sql_line(string $sql): bool
     {
         if (!$this->putline) {
-            return parent::sqlLine($sql);
+            return parent::sql_line($sql);
         }
-
         if ($sql == '\.') {
             $this->putline = false;
             pg_put_line($this->connection, $sql . "\n");
@@ -91,90 +76,70 @@ class PostgreSql extends Db
         } else {
             pg_put_line($this->connection, $sql . "\n");
         }
-
         return true;
     }
-
-    public function sqlQuery(string $query): void
+    public function sql_query(string $query): void
     {
         if (str_starts_with(trim($query), 'COPY ')) {
             if (!extension_loaded('pgsql')) {
-                throw new ModuleException(
-                    \Codeception\Module\Db::class,
-                    "To run 'COPY' commands 'pgsql' extension should be installed"
-                );
+                throw new Module_Exception(\Codeception\Module\Db::class, "To run 'COPY' commands 'pgsql' extension should be installed");
             }
-
-            $strConn = str_replace(';', ' ', substr($this->dsn, 6));
-            $strConn .= ' user=' . $this->user;
-            $strConn .= ' password=' . $this->password;
-            $this->connection = pg_connect($strConn);
-
-            if ($this->searchPath !== null) {
-                pg_query($this->connection, $this->searchPath);
+            $str_conn = str_replace(';', ' ', substr($this->dsn, 6));
+            $str_conn .= ' user=' . $this->user;
+            $str_conn .= ' password=' . $this->password;
+            $this->connection = pg_connect($str_conn);
+            if ($this->search_path !== null) {
+                pg_query($this->connection, $this->search_path);
             }
-
             pg_query($this->connection, $query);
             $this->putline = true;
         } else {
             $this->dbh->exec($query);
         }
     }
-
     /**
      * Get the last inserted ID of table.
      */
-    public function lastInsertId(string $tableName): string
+    public function last_insert_id(string $table_name): string
     {
         /**
          * We make an assumption that the sequence name for this table
          * is based on how postgres names sequences for SERIAL columns
          */
-        $sequenceName = $this->getQuotedName($tableName . '_id_seq');
-        $lastSequence = null;
-
+        $sequence_name = $this->get_quoted_name($table_name . '_id_seq');
+        $last_sequence = null;
         try {
-            $lastSequence = $this->getDbh()->lastInsertId($sequenceName);
+            $last_sequence = $this->get_dbh()->last_insert_id($sequence_name);
         } catch (PDOException) {
             // in this case, the sequence name might be combined with the primary key name
         }
-
         // here we check if for instance, it's something like table_primary_key_seq instead of table_id_seq
         // this could occur when you use some kind of import tool like pgloader
-        if (!$lastSequence) {
-            $primaryKeys = $this->getPrimaryKey($tableName);
-            $pkName = array_shift($primaryKeys);
-            $lastSequence = $this->getDbh()->lastInsertId($this->getQuotedName($tableName . '_' . $pkName . '_seq'));
+        if (!$last_sequence) {
+            $primary_keys = $this->get_primary_key($table_name);
+            $pk_name = array_shift($primary_keys);
+            $last_sequence = $this->get_dbh()->last_insert_id($this->get_quoted_name($table_name . '_' . $pk_name . '_seq'));
         }
-
-        return $lastSequence;
+        return $last_sequence;
     }
-
     /**
      * Returns the primary key(s) of the table, based on:
      * https://wiki.postgresql.org/wiki/Retrieve_primary_key_columns.
      *
      * @return string[]
      */
-    public function getPrimaryKey(string $tableName): array
+    public function get_primary_key(string $table_name): array
     {
-        if (!isset($this->primaryKeys[$tableName])) {
-            $primaryKey = [];
-            $query = "SELECT a.attname
-                FROM   pg_index i
-                JOIN   pg_attribute a ON a.attrelid = i.indrelid
-                                     AND a.attnum = ANY(i.indkey)
-                WHERE  i.indrelid = '" . $this->getQuotedName($tableName) . "'::regclass
-                AND    i.indisprimary";
-            $stmt = $this->executeQuery($query, []);
-            $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (!isset($this->primary_keys[$table_name])) {
+            $primary_key = [];
+            $query = "SELECT a.attname\n                FROM   pg_index i\n                JOIN   pg_attribute a ON a.attrelid = i.indrelid\n                                     AND a.attnum = ANY(i.indkey)\n                WHERE  i.indrelid = '" . $this->get_quoted_name($table_name) . "'::regclass\n                AND    i.indisprimary";
+            $stmt = $this->execute_query($query, []);
+            $columns = $stmt->fetch_all(PDO::FETCH_ASSOC);
             foreach ($columns as $column) {
-                $primaryKey[] = $column['attname'];
+                $primary_key[] = $column['attname'];
             }
-
-            $this->primaryKeys[$tableName] = $primaryKey;
+            $this->primary_keys[$table_name] = $primary_key;
         }
-
-        return $this->primaryKeys[$tableName];
+        return $this->primary_keys[$table_name];
     }
 }

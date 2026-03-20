@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Codeception\Lib\Interfaces;
 
 interface Db
@@ -26,8 +25,7 @@ interface Db
      *
      * Supported operators: `<`, `>`, `>=`, `<=`, `!=`, `like`.
      */
-    public function seeInDatabase(string $table, array $criteria = []): void;
-
+    public function see_in_database(string $table, array $criteria = []): void;
     /**
      * Effect is opposite to ->seeInDatabase
      *
@@ -50,8 +48,7 @@ interface Db
      *
      * Supported operators: `<`, `>`, `>=`, `<=`, `!=`, `like`.
      */
-    public function dontSeeInDatabase(string $table, array $criteria = []): void;
-
+    public function dont_see_in_database(string $table, array $criteria = []): void;
     /**
      * Fetches a single column value from a database.
      * Provide table name, desired column and criteria.
@@ -72,5 +69,5 @@ interface Db
      *
      * @return mixed
      */
-    public function grabFromDatabase(string $table, string $column, array $criteria = []);
+    public function grab_from_database(string $table, string $column, array $criteria = []);
 }

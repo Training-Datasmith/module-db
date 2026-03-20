@@ -1,53 +1,44 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Codeception\Lib\Driver;
 
 use PDO;
-
-class MySql extends Db
+class My_Sql extends Db
 {
     public function cleanup(): void
     {
         $this->dbh->exec('SET FOREIGN_KEY_CHECKS=0;');
-        $res = $this->dbh->query("SHOW FULL TABLES WHERE TABLE_TYPE LIKE '%TABLE';")->fetchAll();
+        $res = $this->dbh->query("SHOW FULL TABLES WHERE TABLE_TYPE LIKE '%TABLE';")->fetch_all();
         foreach ($res as $row) {
             $this->dbh->exec('drop table `' . $row[0] . '`');
         }
         $this->dbh->exec('SET FOREIGN_KEY_CHECKS=1;');
     }
-
-    protected function sqlQuery(string $query): void
+    protected function sql_query(string $query): void
     {
         $this->dbh->exec('SET FOREIGN_KEY_CHECKS=0;');
-        parent::sqlQuery($query);
+        parent::sql_query($query);
         $this->dbh->exec('SET FOREIGN_KEY_CHECKS=1;');
     }
-
-    public function getQuotedName(string $name): string
+    public function get_quoted_name(string $name): string
     {
         return '`' . str_replace('.', '`.`', $name) . '`';
     }
-
     /**
      * @return string[]
      */
-    public function getPrimaryKey(string $tableName): array
+    public function get_primary_key(string $table_name): array
     {
-        if (!isset($this->primaryKeys[$tableName])) {
-            $primaryKey = [];
-            $stmt = $this->getDbh()->query(
-                'SHOW KEYS FROM ' . $this->getQuotedName($tableName) . " WHERE Key_name = 'PRIMARY'"
-            );
-            $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+        if (!isset($this->primary_keys[$table_name])) {
+            $primary_key = [];
+            $stmt = $this->get_dbh()->query('SHOW KEYS FROM ' . $this->get_quoted_name($table_name) . " WHERE Key_name = 'PRIMARY'");
+            $columns = $stmt->fetch_all(PDO::FETCH_ASSOC);
             foreach ($columns as $column) {
-                $primaryKey[] = $column['Column_name'];
+                $primary_key[] = $column['Column_name'];
             }
-            $this->primaryKeys[$tableName] = $primaryKey;
+            $this->primary_keys[$table_name] = $primary_key;
         }
-
-        return $this->primaryKeys[$tableName];
+        return $this->primary_keys[$table_name];
     }
 }
